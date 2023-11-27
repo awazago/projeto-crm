@@ -1,5 +1,7 @@
 const usuarioModel = require('../models/usuarioModel')
-const bcrypt = require('bcrypt')
+const bcrypt = require('bcryptjs')
+const jwt = require('jsonwebtoken');
+const jwtSecret = 'seuSegredoJWT';
 
 const usuarioService = {
 
@@ -20,8 +22,9 @@ const usuarioService = {
        if(usuario) {
             const checkSenha = bcrypt.hashSync(senha, usuario.salt)
             if(checkSenha == usuario.senha) {
-                //Aqui direcionar para sistema
-                return "entrou"
+                const token = jwt.sign({ userId: usuario._id }, jwtSecret, { expiresIn: '1h' })
+                //return res.json({ token })
+                return { token };
             }
        }
        throw new Error("Usuário ou senha inválidos") 
