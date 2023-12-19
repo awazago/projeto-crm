@@ -1,5 +1,6 @@
 const usuarioService = require('../service/usuarioService')
 const usuarioModel = require('../models/usuarioModel')
+const mongoose = require("mongoose")
 
 const usuarioController = {
   listarUsuarios: async (req, res) => {
@@ -36,10 +37,13 @@ const usuarioController = {
   obterUsuarioPorId: async (req, res) => {
     const usuarioId = req.params.id;
     try {
-      const usuario = await usuarioModel.findById(usuarioId)
-      if (!usuario) {
+      if (!mongoose.Types.ObjectId.isValid(usuarioId)) {
         return res.status(404).json({ error: 'Usuário não encontrado' });
       }
+      const usuario = await usuarioModel.findById(usuarioId)
+      /*if (!usuario) {
+        return res.status(404).json({ error: 'Usuário não encontrado' });
+      }*/
       res.json(usuario);
     } catch (error) {
       console.error('Erro ao obter usuário por ID:', error);
@@ -51,10 +55,11 @@ const usuarioController = {
     const usuarioId = req.params.id;
     const dadosAtualizados = req.body;
     try {
-      const usuario = await usuarioModel.findByIdAndUpdate(usuarioId, dadosAtualizados, { new: true });
-      if (!usuario) {
+      if (!mongoose.Types.ObjectId.isValid(usuarioId)) {
         return res.status(404).json({ error: 'Usuário não encontrado' });
       }
+      const usuario = await usuarioModel.findByIdAndUpdate(usuarioId, dadosAtualizados, { new: true });
+      
       res.json(usuario);
     } catch (error) {
       console.error('Erro ao atualizar usuário:', error);
@@ -65,10 +70,11 @@ const usuarioController = {
   excluirUsuario: async (req, res) => {
     const usuarioId = req.params.id;
     try {
-      const usuarioExcluido = await usuarioModel.findByIdAndRemove(usuarioId);
-      if (!usuarioExcluido) {
+      if (!mongoose.Types.ObjectId.isValid(usuarioId)) {
         return res.status(404).json({ error: 'Usuário não encontrado' });
       }
+      const usuarioExcluido = await usuarioModel.findByIdAndRemove(usuarioId);
+      
       res.sendStatus(204);
     } catch (error) {
       console.error('Erro ao excluir usuário:', error);
